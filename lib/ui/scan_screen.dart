@@ -38,7 +38,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
                       final List<Barcode> barcodes = capture.barcodes;
                       for (final barcode in barcodes) {
                         print(barcode.rawValue ?? 'No Data found in QR');
-                        if(barcode.rawValue != null && !isFinished){
+                        if (barcode.rawValue != null && !isFinished) {
                           isFinished = true;
                           Navigator.of(context).pop(context);
                           return;
@@ -46,6 +46,16 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
                       }
                     }),
                 const CameraFrameWidget(),
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  alignment: AlignmentDirectional.topCenter,
+                  padding: const EdgeInsets.only(top: 55),
+                  child: const Text(
+                    '코드를 스캔 하세요.',
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                ),
               ],
             ),
     );
@@ -75,7 +85,6 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
   }
 
   Future<void> requestPermission(BuildContext context, Permission permission, Function callback) async {
-
     if (isShowingDialog) {
       return;
     }

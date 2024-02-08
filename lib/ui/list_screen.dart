@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+const double font_size = 16;
+
 class ListScreen extends StatefulWidget {
   var current = DateTime.now();
   var nextVisibility = false;
@@ -30,7 +32,7 @@ class _ListScreenState extends State<ListScreen> {
             decoration: BoxDecoration(color: Colors.black12),
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               GestureDetector(onTap: () => _previousClick(), child: Container(margin: EdgeInsets.only(left: 22), child: Icon(Icons.arrow_circle_left_rounded))),
-              Text(DateFormat('yyyy년 MM월').format(widget.current), style: TextStyle(color: Colors.black, fontSize: 22)),
+              Text(DateFormat('yyyy년 MM월').format(widget.current), style: TextStyle(color: Colors.black, fontSize: font_size)),
               Visibility(
                   visible: widget.nextVisibility,
                   maintainSize: true,
@@ -70,7 +72,7 @@ class _ListScreenState extends State<ListScreen> {
                       margin: EdgeInsets.only(bottom: 44),
                       child: Text(
                         '확인할 날짜를 선택하세요.',
-                        style: TextStyle(fontSize: 22, color: Colors.black54),
+                        style: TextStyle(fontSize: font_size, color: Colors.black54),
                       ))
                   : Container(
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -113,12 +115,12 @@ class _ListScreenState extends State<ListScreen> {
                             decoration: item.getBoxDecoration(),
                             child: Text(
                               item.txt,
-                              style: TextStyle(color: Colors.black, fontSize: 22),
+                              style: TextStyle(color: Colors.black, fontSize: font_size),
                             ),
                           ),
                           Text(
                             item.type.name,
-                            style: TextStyle(color: Colors.black, fontSize: 22),
+                            style: TextStyle(color: Colors.black, fontSize: font_size),
                           ),
                         ],
                       ),
@@ -226,7 +228,7 @@ class DaysItem {
       DayType.saturday => Colors.blue,
       _ => isInMonth ? Colors.black : Colors.black12,
     };
-    return TextStyle(fontSize: 22, color: color);
+    return TextStyle(fontSize: font_size, color: color);
   }
 
   BoxDecoration? getBoxDecoration() {
