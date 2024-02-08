@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        appBarTheme: const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
               ScreenObject('QR 스캔', ScanScreen()),
               ScreenObject('출퇴근\n내역 조회', ListScreen()),
-              ScreenObject('오픈\n라이선스', LicenseScreen()),
+              ScreenObject('오픈\n라이선스', const LicenseScreen()),
             ]
                     .map((obj) => Expanded(
                           flex: 33,
