@@ -126,6 +126,7 @@ See the License for the specific language governing permissions and
           'intl',
           'mobile_scanner',
           'permission_handler',
+          'flutter_launcher_icons',
         ]
             .map((str) => Container(
                   padding: const EdgeInsets.all(11.0),

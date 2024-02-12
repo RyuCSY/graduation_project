@@ -39,6 +39,7 @@ dependencies:
   mobile_scanner: ^4.0.0
   permission_handler: ^11.2.0
   sprintf: ^7.0.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:

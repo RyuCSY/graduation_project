@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(children: [
             const Spacer(),
             Text(
-              '출퇴근 관리 앱',
+              '출퇴근 관리자',
               style: OutlineTextStyle(txtColor: Colors.white, lineColor: Colors.blueGrey),
             ),
             const Spacer(),
