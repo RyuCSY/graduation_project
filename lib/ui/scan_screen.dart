@@ -73,7 +73,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.resumed) {
-      requestPermission(context, Permission.camera, () => showPermissionDialog());
+      requestPermission(
+          context, Permission.camera, () => showPermissionDialog());
     }
   }
 
@@ -84,7 +85,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> requestPermission(BuildContext context, Permission permission, Function callback) async {
+  Future<void> requestPermission(
+      BuildContext context, Permission permission, Function callback) async {
     if (isShowingDialog) {
       return;
     }
@@ -117,7 +119,8 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
-                      Future<void>.delayed(Duration.zero, () => openAppSettings());
+                      Future<void>.delayed(
+                          Duration.zero, () => openAppSettings());
                       isCancel = false;
                       Navigator.pop(context);
                     },
@@ -139,11 +142,14 @@ class CameraFrameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.transparent, body: _getCustomPaintOverlay(context));
+    return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: _getCustomPaintOverlay(context));
   }
 
   CustomPaint _getCustomPaintOverlay(BuildContext context) {
-    return CustomPaint(size: MediaQuery.of(context).size, painter: RectanglePainter());
+    return CustomPaint(
+        size: MediaQuery.of(context).size, painter: RectanglePainter());
   }
 }
 
@@ -158,7 +164,12 @@ class RectanglePainter extends CustomPainter {
         PathOperation.difference,
         Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
         Path()
-          ..addRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: centerPosition, width: squareSize, height: squareSize), const Radius.circular(15)))
+          ..addRRect(RRect.fromRectAndRadius(
+              Rect.fromCenter(
+                  center: centerPosition,
+                  width: squareSize,
+                  height: squareSize),
+              const Radius.circular(15)))
           ..close());
 
     canvas.drawPath(path, paint);
@@ -170,7 +181,10 @@ class RectanglePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     path = Path()
-      ..addRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: centerPosition, width: squareSize, height: squareSize), const Radius.circular(15)))
+      ..addRRect(RRect.fromRectAndRadius(
+          Rect.fromCenter(
+              center: centerPosition, width: squareSize, height: squareSize),
+          const Radius.circular(15)))
       ..close();
 
     canvas.drawPath(path, paint);

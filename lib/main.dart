@@ -1,5 +1,5 @@
 import 'package:attendance/ui/license_screen.dart';
-import 'package:attendance/ui/list_screen.dart';
+import 'package:attendance/ui/history_screen.dart';
 import 'package:attendance/ui/outline_text.dart';
 import 'package:attendance/ui/scan_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+        appBarTheme:
+            const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
@@ -65,13 +66,14 @@ class _MyHomePageState extends State<MyHomePage> {
             const Spacer(),
             Text(
               '출퇴근 관리 앱',
-              style: OutlineTextStyle(txtColor: Colors.white, lineColor: Colors.blueGrey),
+              style: OutlineTextStyle(
+                  txtColor: Colors.white, lineColor: Colors.blueGrey),
             ),
             const Spacer(),
             Row(
                 children: [
               ScreenObject('QR 스캔', ScanScreen()),
-              ScreenObject('출퇴근\n내역 조회', ListScreen()),
+              ScreenObject('출퇴근\n내역 조회', HistoryScreen()),
               ScreenObject('오픈\n라이선스', const LicenseScreen()),
             ]
                     .map((obj) => Expanded(
@@ -79,13 +81,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: InkWell(
                             onTap: () => {
                               Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) => obj.screen,
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        obj.screen,
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0);
                                   const end = Offset.zero;
                                   const curve = Curves.ease;
 
-                                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                  var tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
 
                                   return SlideTransition(
                                     position: animation.drive(tween),
@@ -109,7 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Text(
                                 obj.title,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(color: Colors.purple, fontSize: 22.0),
+                                style: const TextStyle(
+                                    color: Colors.purple, fontSize: 22.0),
                               ),
                             ),
                           ),
