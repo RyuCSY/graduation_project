@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme:
-            const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+        appBarTheme: const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
@@ -66,39 +65,84 @@ class _MyHomePageState extends State<MyHomePage> {
             const Spacer(),
             Text(
               '출퇴근 관리 앱',
-              style: OutlineTextStyle(
-                  txtColor: Colors.white, lineColor: Colors.blueGrey),
+              style: OutlineTextStyle(txtColor: Colors.white, lineColor: Colors.blueGrey),
             ),
             const Spacer(),
             Row(
                 children: [
-              ScreenObject('QR 스캔', ScanScreen()),
+              ScreenObject('QR 스캔', Text(''), addAction: () async {
+                final sendData = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                          title: const Text('출퇴근 관리앱.'),
+                          content: const Text('출근/퇴근 여부를 선택하세요.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text('출근'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('퇴근'),
+                            ),
+                          ],
+                        ));
+
+                return ScanScreen(sendData);
+              }),
               ScreenObject('출퇴근\n내역 조회', HistoryScreen()),
               ScreenObject('오픈\n라이선스', const LicenseScreen()),
             ]
                     .map((obj) => Expanded(
                           flex: 33,
                           child: InkWell(
-                            onTap: () => {
-                              Navigator.of(context).push(PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        obj.screen,
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0);
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
+                            onTap: () async {
+                              {
+                                Widget? nextScreen;
 
-                                  var tween = Tween(begin: begin, end: end)
-                                      .chain(CurveTween(curve: curve));
+                                if (obj.addAction != null) {
+                                  nextScreen = await obj.addAction!();
+                                }
 
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
-                              ))
+                                String? rcvData = await Navigator.of(
+                                  context,
+                                ).push(PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => (nextScreen == null) ? obj.screen : nextScreen,
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.ease;
+
+                                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
+                                ));
+
+                                if (rcvData != null) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                            title: const Text('결과.'),
+                                            content: Text(rcvData ?? ''),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, true);
+                                                },
+                                                child: const Text('확인'),
+                                              ),
+                                            ],
+                                          ));
+                                }
+                              }
                             },
                             child: Container(
                               height: 111,
@@ -115,8 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Text(
                                 obj.title,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    color: Colors.purple, fontSize: 22.0),
+                                style: const TextStyle(color: Colors.purple, fontSize: 22.0),
                               ),
                             ),
                           ),
@@ -133,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
 class ScreenObject {
   final String title;
   final Widget screen;
+  Function? addAction;
 
-  ScreenObject(this.title, this.screen);
+  ScreenObject(this.title, this.screen, {Function? this.addAction});
 }

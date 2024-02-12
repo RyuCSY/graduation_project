@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({super.key});
+  bool isAtt;
+  String retMsg = '취소 하였습니다.';
+
+  ScanScreen(this.isAtt, {super.key});
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -22,42 +26,59 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('스캔', style: TextStyle(color: Colors.white)),
-      ),
-      body: (!isCameraGranted)
-          ? Container(color: Colors.black)
-          : Stack(
-              children: [
-                MobileScanner(
-                    controller: cameraController,
-                    onDetect: (capture) {
-                      final List<Barcode> barcodes = capture.barcodes;
-                      for (final barcode in barcodes) {
-                        print(barcode.rawValue ?? 'No Data found in QR');
-                        if (barcode.rawValue != null && !isFinished) {
-                          isFinished = true;
-                          Navigator.of(context).pop(context);
-                          return;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+        Navigator.pop(context, widget.retMsg);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text('스캔', style: TextStyle(color: Colors.white)),
+        ),
+        body: (!isCameraGranted)
+            ? Container(color: Colors.black)
+            : Stack(
+                children: [
+                  MobileScanner(
+                      controller: cameraController,
+                      onDetect: (capture) {
+                        final List<Barcode> barcodes = capture.barcodes;
+                        for (final barcode in barcodes) {
+                          if (barcode.rawValue != null && !isFinished) {
+                            final scanData = barcode.rawValue!;
+
+                            isFinished = true;
+
+                            if (scanData.startsWith('rapps:')) {
+                              widget.retMsg = (widget.isAtt) ? '출근' : '퇴근';
+                              widget.retMsg += '기록에 성공 하였습니다. (${DateFormat('HH:mm').format(DateTime.now())})';
+                            } else {
+                              widget.retMsg = '올바른 QR 코드가 아닙니다.';
+                            }
+                            Navigator.pop(context, widget.retMsg);
+                            return;
+                          }
                         }
-                      }
-                    }),
-                const CameraFrameWidget(),
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  alignment: AlignmentDirectional.topCenter,
-                  padding: const EdgeInsets.only(top: 55),
-                  child: const Text(
-                    '코드를 스캔 하세요.',
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                      }),
+                  const CameraFrameWidget(),
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    alignment: AlignmentDirectional.topCenter,
+                    padding: const EdgeInsets.only(top: 55),
+                    child: const Text(
+                      '코드를 스캔 하세요.',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -73,8 +94,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.resumed) {
-      requestPermission(
-          context, Permission.camera, () => showPermissionDialog());
+      requestPermission(context, Permission.camera, () => showPermissionDialog());
     }
   }
 
@@ -85,8 +105,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> requestPermission(
-      BuildContext context, Permission permission, Function callback) async {
+  Future<void> requestPermission(BuildContext context, Permission permission, Function callback) async {
     if (isShowingDialog) {
       return;
     }
@@ -119,8 +138,7 @@ class _ScanScreenState extends State<ScanScreen> with WidgetsBindingObserver {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
-                      Future<void>.delayed(
-                          Duration.zero, () => openAppSettings());
+                      Future<void>.delayed(Duration.zero, () => openAppSettings());
                       isCancel = false;
                       Navigator.pop(context);
                     },
@@ -142,14 +160,11 @@ class CameraFrameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: _getCustomPaintOverlay(context));
+    return Scaffold(backgroundColor: Colors.transparent, body: _getCustomPaintOverlay(context));
   }
 
   CustomPaint _getCustomPaintOverlay(BuildContext context) {
-    return CustomPaint(
-        size: MediaQuery.of(context).size, painter: RectanglePainter());
+    return CustomPaint(size: MediaQuery.of(context).size, painter: RectanglePainter());
   }
 }
 
@@ -164,12 +179,7 @@ class RectanglePainter extends CustomPainter {
         PathOperation.difference,
         Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
         Path()
-          ..addRRect(RRect.fromRectAndRadius(
-              Rect.fromCenter(
-                  center: centerPosition,
-                  width: squareSize,
-                  height: squareSize),
-              const Radius.circular(15)))
+          ..addRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: centerPosition, width: squareSize, height: squareSize), const Radius.circular(15)))
           ..close());
 
     canvas.drawPath(path, paint);
@@ -181,10 +191,7 @@ class RectanglePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-          Rect.fromCenter(
-              center: centerPosition, width: squareSize, height: squareSize),
-          const Radius.circular(15)))
+      ..addRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: centerPosition, width: squareSize, height: squareSize), const Radius.circular(15)))
       ..close();
 
     canvas.drawPath(path, paint);
